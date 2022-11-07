@@ -1,0 +1,81 @@
+services:
+  prefect:
+    image: prefecthq/prefect:2-latest
+    container_name: prefect_orion
+    networks:
+      - netw
+    ports:
+      - "4200:4200"
+    environment:
+      - PREFECT_ORION_UI_ENABLED=true
+      - PREFECT_HOME=/opt/prefect
+      - PREFECT_API_URL=http://127.0.0.1:4200/api
+    entrypoint:
+      - prefect
+      - orion 
+      - start 
+      - --host=0.0.0.0
+    volumes:
+      - prefectvolume:/opt/prefect
+  prefect-agent:
+    image: prefecthq/prefect:2.6-python3.9
+    container_name: prefect_agent
+    networks:
+      - netw
+    environment:
+      - PREFECT_API_URL=http://prefect:4200/api
+    entrypoint:
+      - prefect
+      - agent 
+      - start 
+      - --work-queue=docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - prefect
+  minio:
+    image: minio/minio
+    container_name: minio
+    networks:
+      - netw
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=miniopass
+    ports:
+      - "9090:9090"
+      - "9000:9000"
+    command:
+      - server
+      - /data
+      - --console-address 
+      - ":9090"
+    volumes:
+      - miniodata:/data
+  mlflow:
+    build: 
+      context: ./mlflow
+      dockerfile: mlflow-dockerfile
+    container_name: mlflow
+    networks:
+      - netw
+    environment:
+      - AWS_ACCESS_KEY_ID=minio
+      - AWS_SECRET_ACCESS_KEY=miniopass
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+    ports:
+      - "5000:5000"
+    entrypoint:
+      - mlflow
+      - ui
+      - --host=0.0.0.0
+      - --backend-store-uri=sqlite:///mlflow/mlflow.db
+      - --default-artifact-root=s3://mlflow-artifacts
+    volumes:
+      - mlflow:/mlflow
+volumes:
+  prefectvolume: {}
+  miniodata: {}
+  mlflow: {}
+networks:
+  netw:
+

@@ -1,0 +1,15 @@
+agent:
+  config:
+    workQueues:
+      - kubernetes
+    queryInterval: 5
+    prefetchSeconds: 10
+
+  apiConfig: "orion"
+
+  orionApiConfig:
+    apiUrl: http://prefect-orion:4200/api
+
+
+serviceAccount:
+  create: true

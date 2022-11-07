@@ -1,0 +1,44 @@
+tenant:
+  name: prefect
+  namespace: prefect
+  pools:
+  - servers: 1
+    size: 20Gi
+    volumesPerServer: 1
+  secrets:
+    accessKey: minio
+    enabled: true
+    name: prefect-minio
+    secretKey: minio123
+  env:
+    - name: MINIO_SERVER_URL
+      value: http://minio-prefect.{{ .Values.IP }}.nip.io
+
+  certificate:
+    requestAutoCert: false
+
+ingress:
+  api:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    tls: []
+      #- secretName: minio-prefect-tls
+      #  hosts: 
+      #    - minio-prefect.{{ .Values.IP }}.nip.io
+    host: minio-prefect.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: Prefix
+  console:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    tls: []
+      #- secretName: minio-prefect-console-tls
+      #  hosts: 
+      #    - minio-prefect-console.{{ .Values.IP }}.nip.io
+    host: minio-prefect-console.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: Prefix

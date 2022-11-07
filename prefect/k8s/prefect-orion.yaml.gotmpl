@@ -1,0 +1,41 @@
+serviceAccount:
+  create: true
+  annotations: {}
+
+orion:
+  env:
+    - name: PREFECT_ORION_UI_ENABLED
+      value: "true"
+    - name: PREFECT_API_URL
+      value: https://prefect.{{ .Values.IP }}.nip.io/api
+    - name: PREFECT_MEMOIZE_BLOCK_AUTO_REGISTRATION
+      value: "false"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  host:
+    hostname: prefect.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: ImplementationSpecific
+
+  tls: false
+  extraTls: false
+  selfSigned: false
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "123456"
+    username: "prefectuser"
+    database: "prefect"
+    password: "changeme"
+  containerPorts:
+    postgresql: 5432
+  useSubChart: true
+  primary:
+    initdb:
+      user: postgres
+

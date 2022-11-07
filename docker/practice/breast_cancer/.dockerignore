@@ -1,0 +1,5 @@
+training/
+__pycache__
+*.sh
+[dD]ocker*
+
