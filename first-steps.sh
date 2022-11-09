@@ -28,7 +28,7 @@ curl -sLJO https://github.com/helmfile/helmfile/releases/download/v0.147.0/helmf
 tar -xzf helmfile_0.147.0_linux_amd64.tar.gz helmfile && chmod +x helmfile && sudo mv helmfile /usr/local/bin/helmfile && rm helmfile_0.147.0_linux_amd64.tar.gz
 
 echo "Installing conda"
-curl -s https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh -o miniconda.sh
+curl -s https://repo.anaconda.com/miniconda/Miniconda3-py310_4.12.0-Linux-x86_64.sh -o miniconda.sh
 bash miniconda.sh -u -b -p "$HOME/miniconda"
 rm -rf miniconda.sh
 "$HOME/miniconda/bin/conda" init bash

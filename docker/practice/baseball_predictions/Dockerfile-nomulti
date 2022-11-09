@@ -1,0 +1,16 @@
+FROM python:3.9-slim
+
+# Send stream output to the terminal 
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /tmp
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENTRYPOINT ["python", "cli.py"]
+
+CMD ["--weight", "100"]
