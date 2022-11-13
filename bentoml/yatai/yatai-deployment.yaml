@@ -1,0 +1,10 @@
+dockerRegistry:
+  server: 127.0.0.1:5000
+  inClusterServer: docker-registry.yatai-deployment.svc.cluster.local:5000
+  username: ""
+  password: ""
+  secure: false
+  bentoRepositoryName: yatai-bentos
+layers:
+  network:
+    ingressClass: nginx

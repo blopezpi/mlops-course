@@ -1,0 +1,5 @@
+postgresql:
+  replicaCount: 1
+  username: "postgres"
+  password: "test"
+  database: "yatai"

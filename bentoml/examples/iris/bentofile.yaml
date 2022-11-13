@@ -1,0 +1,10 @@
+service: "service:svc"
+labels:
+  owner: "MLOPs Course"
+  env: "prod"
+include:
+  - "service.py"
+python:
+  packages:
+    - scikit-learn
+    - pandas

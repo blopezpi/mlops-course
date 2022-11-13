@@ -1,0 +1,21 @@
+tenant:
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/bentoml/minio-minio
+    tag: RELEASE.2021-10-06T23-36-31Z
+  metrics:
+    enabled: false
+    port: 9000
+  mountPath: /export
+  name: yatai-minio
+  namespace: yatai-system
+  pools:
+  - servers: 1
+    size: 5Gi
+    volumesPerServer: 1
+  secrets:
+    accessKey: access
+    enabled: true
+    name: yatai-minio
+    secretKey: secretpass
+  subPath: /data

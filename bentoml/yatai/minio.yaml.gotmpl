@@ -1,0 +1,13 @@
+console:
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    tls:
+      - secretName: console-minio-tls
+        hosts: 
+          - console.{{ .Values.IP }}.nip.io
+    host: console.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: Prefix

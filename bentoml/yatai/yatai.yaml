@@ -1,0 +1,14 @@
+postgresql:
+  host: postgresql-ha-pgpool.yatai-system.svc.cluster.local
+  port: 5432
+  user: postgres
+  database: yatai
+  password: test
+  sslmode: disable
+s3:
+  endpoint: minio.yatai-system.svc.cluster.local
+  region: foo
+  bucketName: yatai # Create on the minio console
+  secure: false
+  accessKey: access
+  secretKey: secretpass

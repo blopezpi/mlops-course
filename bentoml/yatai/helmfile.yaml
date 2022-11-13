@@ -1,0 +1,94 @@
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: bedag
+    url: https://bedag.github.io/helm-charts/
+  - name: minio
+    url: https://operator.min.io/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: bentoml
+    url: https://bentoml.github.io/helm-charts
+  - name: twuni 
+    url: https://helm.twun.io
+
+helmDefaults:
+  createNamespace: true
+  disableValidation: true
+
+environments:
+  default:
+    values:
+      - IP: 192.168.49.2
+
+templates:
+  default: &default
+    namespace: kube-system
+    missingFileHandler: Warn
+    values:
+    - "{{`{{ .Release.Name }}`}}.yaml"
+    - "{{`{{ .Release.Name }}`}}.yaml.gotmpl"
+
+releases:
+  - name: cert-manager
+    <<: *default
+    namespace: cert-manager
+    chart: jetstack/cert-manager
+    version: v1.9.1
+  - name: cert-manager-clusterissuer
+    chart: "bedag/raw"
+    namespace: "cert-manager"
+    labels:
+      component: "cert-manager"
+      namespace: "cert-manager"
+      default: "false"
+    needs:
+      - cert-manager
+    values:
+    - resources:
+      - apiVersion: cert-manager.io/v1
+        kind: ClusterIssuer
+        metadata:
+          name: letsencrypt
+        spec:
+          acme:
+            server: "https://acme-v02.api.letsencrypt.org/directory"
+            email: "myemail@mailinator.com"
+            privateKeySecretRef:
+              name: letsencrypt
+            solvers:
+              - http01:
+                  ingress:
+                    class: nginx
+  - name: postgresql-ha
+    <<: *default
+    namespace: yatai-system
+    chart: bitnami/postgresql-ha
+  - name: minio
+    <<: *default
+    namespace: minio
+    chart: minio/operator
+  - name: minio-tenant
+    <<: *default
+    namespace: yatai-system
+    needs:
+      - minio/minio
+    chart: minio/tenant
+  - name: yatai
+    <<: *default
+    namespace: yatai-system
+    chart: bentoml/yatai
+    needs:
+      - postgresql-ha
+      - minio/minio
+      - minio-tenant
+  - name: docker-registry
+    <<: *default
+    namespace: yatai-deployment
+    chart: twuni/docker-registry
+  - name: yatai
+    <<: *default
+    namespace: yatai-deployment
+    chart: bentoml/yatai-deployment
+    needs:
+      - docker-registry
