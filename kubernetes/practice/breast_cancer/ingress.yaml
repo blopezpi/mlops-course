@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: breast
+  labels:
+    name: breast
+spec:
+  ingressClassName: "nginx"
+  rules:
+  - host: 192.168.49.2.nip.io
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: breast
+            port: 
+              number: 8000

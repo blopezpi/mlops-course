@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: breast-cancer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: breast_cancer
+  template:
+    metadata:
+      labels:
+        app: breast_cancer
+    spec:
+      containers:
+      - name: api
+        image: blopezp007/breast-cancer:1.0.0
+        env:
+          - name: PORT
+            value: "8080"
+        envFrom:
+          - secretRef:
+              name: breast-secret
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "150m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
+          name: http
