@@ -1,3 +1,7 @@
+secrets:
+  accessKey: minio
+  secretKey: minio123
+
 tenant:
   name: prefect
   namespace: prefect
@@ -5,11 +9,6 @@ tenant:
   - servers: 1
     size: 20Gi
     volumesPerServer: 1
-  secrets:
-    accessKey: minio
-    enabled: true
-    name: prefect-minio
-    secretKey: minio123
   env:
     - name: MINIO_SERVER_URL
       value: http://minio-prefect.{{ .Values.IP }}.nip.io

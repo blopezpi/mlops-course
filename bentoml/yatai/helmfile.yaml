@@ -29,12 +29,17 @@ templates:
     - "{{`{{ .Release.Name }}`}}.yaml"
     - "{{`{{ .Release.Name }}`}}.yaml.gotmpl"
 
+
 releases:
   - name: cert-manager
     <<: *default
     namespace: cert-manager
     chart: jetstack/cert-manager
     version: v1.9.1
+  - name: namespaces
+    <<: *default
+    chart: "bedag/raw"
+    namespace: "yatai"
   - name: cert-manager-clusterissuer
     chart: "bedag/raw"
     namespace: "cert-manager"
@@ -86,9 +91,10 @@ releases:
     <<: *default
     namespace: yatai-deployment
     chart: twuni/docker-registry
-  - name: yatai
+  - name: yatai-deployment
     <<: *default
     namespace: yatai-deployment
     chart: bentoml/yatai-deployment
     needs:
       - docker-registry
+      - yatai/namespaces

@@ -4,7 +4,6 @@ dockerRegistry:
   username: ""
   password: ""
   secure: false
-  bentoRepositoryName: yatai-bentos
 layers:
   network:
     ingressClass: nginx

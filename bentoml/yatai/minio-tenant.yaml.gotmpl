@@ -1,0 +1,40 @@
+secrets:
+  accessKey: access
+  secretKey: secretpass
+
+tenant:
+  name: yatai-minio
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/bentoml/minio-minio
+    tag: RELEASE.2021-10-06T23-36-31Z
+  pools:
+  - servers: 1
+    size: 5Gi
+    volumesPerServer: 1
+  certificate:
+    requestAutoCert: false
+  env:
+  - name: MINIO_SERVER_URL
+    value: http://minio-yatai.{{ .Values.IP }}.nip.io
+
+ingress:
+  api:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    tls: []
+    host: minio-yatai.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: Prefix
+  console:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    tls: []
+    host: minio-yatai-console.{{ .Values.IP }}.nip.io
+    path: /
+    pathType: Prefix
+

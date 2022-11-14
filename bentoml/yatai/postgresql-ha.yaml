@@ -3,3 +3,6 @@ postgresql:
   username: "postgres"
   password: "test"
   database: "yatai"
+  repmgrPassword: "pass"
+pgpool:
+  adminPassword: "pass" 
