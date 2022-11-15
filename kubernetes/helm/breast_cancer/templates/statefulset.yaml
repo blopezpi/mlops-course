@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "breast_cancer.mongo.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "breast_cancer.mongo.selectorLabels" . | nindent 6 }}
+  serviceName: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "breast_cancer.mongo.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: mongo
+        image: "{{ .Values.mongo.image.repository }}:{{ .Values.mongo.image.tag | default "latest" }}"
+        imagePullPolicy: {{ .Values.mongo.image.pullPolicy }}        
+        ports:
+        - containerPort: {{ .Values.mongo.port }}
+          name: mongo
+        {{- with .Values.mongo.livenessProbe }}
+        livenessProbe:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.mongo.readinessProbe }}
+        readinessProbe:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        env:
+        {{- range $name, $value := .Values.mongo.env }}
+          - name: {{ $name }}
+            value: {{ $value | quote }}
+        {{- end }}
+        {{- if .Values.mongo.secrets.create }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.mongo.secrets.name }}
+        {{- end }}
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.mongo.volume_name | default "data" }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.mongo.volume_size | default "5Gi" }}

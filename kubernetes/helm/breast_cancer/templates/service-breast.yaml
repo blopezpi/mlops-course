@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "breast_cancer.fullname" . }}
+  labels:
+    {{- include "breast_cancer.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.api.port.name }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "breast_cancer.selectorLabels" . | nindent 4 }}

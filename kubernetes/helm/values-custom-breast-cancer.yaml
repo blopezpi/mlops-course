@@ -1,0 +1,73 @@
+replicaCount: 1
+
+image:
+  repository: blopezp007/breast-cancer
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.1.0"
+
+
+serviceAccount:
+  create: false
+  name: "default"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: 192.168.49.2.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+
+resources: 
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+
+api:
+  port:
+    name: http
+    number: 8000
+    protocol: TCP
+  env:
+    PORT: 8000
+  readinessProbe:
+    httpGet:
+      path: /ping
+      port: 8000
+  livenessProbe:
+    tcpSocket:
+      port: 8000
+
+
+mongo:
+  port: 27017
+  service:
+    type: ClusterIP
+    port: 27017
+    targetPort: mongo
+  image:
+    repository: mongo
+  secrets:
+    create: create
+    name: mongo
+    values:
+      MONGO_INITDB_ROOT_PASSWORD: test
+  env: 
+    MONGO_INITDB_ROOT_USERNAME: root
+
+secrets:
+  create: create
+  name: breast-cancer
+  values:
+    MONGO_URI: "mongodb://root:test@mongo-0.mongo.default.svc.cluster.local:27017"

@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: blopezp007/exercise3
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0.0"
+
+
+serviceAccount:
+  create: false
+  name: "default"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: 192.168.49.2.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+env:
+  PORT: 8080
+  APP_MODULE: "app:app"

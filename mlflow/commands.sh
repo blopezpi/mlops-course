@@ -1,3 +1,5 @@
+mlflow ui --host 0.0.0.0
+export MLFLOW_TRACKING_URL=http://localhost:5000
 mlflow models build-docker --model-uri "runs:/<run-id>/model" --name "iris-mlflow" [--enable-mlserver]
 mlflow models generate-dockerfile --model-uri "runs:/<run-id>/model"
 # Abre API Rest and gRPC
