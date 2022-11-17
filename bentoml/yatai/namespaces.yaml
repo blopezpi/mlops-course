@@ -3,3 +3,36 @@ resources:
     kind: Namespace
     metadata:
       name: yatai-builders
+  - apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: docker-private-registry-proxy
+      namespace: yatai-deployment
+      labels:
+        app: docker-private-registry-proxy
+    spec:
+      selector:
+        matchLabels:
+          app: docker-private-registry-proxy
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: docker-private-registry-proxy
+        spec:
+          containers:
+          - args:
+            - tcp
+            - "5000"
+            - docker-registry.yatai-deployment.svc.cluster.local
+            image: quay.io/bentoml/proxy-to-service:v2
+            name: tcp-proxy
+            ports:
+            - containerPort: 5000
+              hostPort: 5000
+              name: tcp
+              protocol: TCP
+            resources:
+              limits:
+                cpu: 100m
+                memory: 100Mi

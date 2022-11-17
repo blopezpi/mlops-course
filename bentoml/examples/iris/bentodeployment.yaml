@@ -4,7 +4,7 @@ metadata:
   name: my-bento-deployment
   namespace: yatai
 spec:
-  bento_tag: # Your bento version
+  bento_tag: iris_classifier:2uwvhzdf2scgly2c 
   ingress:
     enabled: true
   resources:

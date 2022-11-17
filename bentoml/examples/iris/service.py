@@ -1,13 +1,29 @@
-import numpy as np
 import bentoml
-from bentoml.io import NumpyNdarray
+import pandas as pd
+from bentoml.io import JSON
+from pydantic import BaseModel
+from typing import Dict
 
-iris_clf_runner = bentoml.sklearn.get("iris_clf:latest").to_runner()
 
-svc = bentoml.Service("iris_classifier", runners=[iris_clf_runner])
+class Iris(BaseModel):
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
 
-@svc.api(input=NumpyNdarray(dtype=float, enforce_dtype=True, shape=(1, 4), enforce_shape=True),
-        output=NumpyNdarray(dtype=int, enforce_dtype=True, shape=(1,), enforce_shape=True))
-def classify(input_series: np.ndarray) -> np.ndarray:
-    result = await iris_clf_runner.predict.run(input_series)
-    return result
+
+model_1 = bentoml.models.get("iris_clf:latest")
+
+runner_1 = model_1.to_runner()
+
+service = bentoml.Service("iris_classifier", runners=[runner_1])
+
+flowers =  ['setosa', 'versicolor', 'virginica']
+
+@service.api(input=JSON(pydantic_model=Iris),
+        output=JSON())
+async def classify_1(input_data: Iris) -> Dict[str, str]:
+    input_df = pd.DataFrame([input_data.dict()])
+    result = await runner_1.predict.async_run(input_df)
+    return {"prediction": flowers[result[0]] , "model": model_1.tag}
+
