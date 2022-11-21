@@ -1,10 +1,10 @@
 apiVersion: serving.yatai.ai/v1alpha3
 kind: BentoDeployment
 metadata:
-  name: my-bento-deployment
+  name: mlops-iris-classification
   namespace: yatai
 spec:
-  bento_tag: iris_classifier:2uwvhzdf2scgly2c 
+  bento_tag: iris_classifier:isypwsdjzwtme4pw
   ingress:
     enabled: true
   resources:
@@ -29,5 +29,3 @@ spec:
     autoscaling:
       max_replicas: 2
       min_replicas: 1
-      cpu: 50
-      memory: 50
